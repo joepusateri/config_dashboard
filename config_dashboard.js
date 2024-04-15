@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-04-05
-// @description  try to take over the world!
+// @version      2024-04-15
+// @description  Render the Device Configuration settings in a readable format
 // @author       You
 // @match        https://device-config.nauto.systems/edit-configs/*
 // @match        https://device-config.staging-us.nauto.systems/edit-configs/*
@@ -72,23 +72,24 @@
     {
         var retStr = "<table  class=\"c1\" style=\"display:inline\">";
 
-        if (val == -1) retStr += "<tr><td>Not set</td></tr>";
+        if (val == -1) {
+            retStr += "<tr><td>Not set</td></tr>";
+        } else {
+            if ((val % 2) == 1)
+                retStr += "<tr><td>"+options[0]+"</td></tr>";
+            else
+                retStr += "<tr><td>Do not "+options[0]+"</td></tr>";
 
-        if ((val % 2) == 1)
-            retStr += "<tr><td>"+options[0]+"</td></tr>";
-        else
-            retStr += "<tr><td>Do not "+options[0]+"</td></tr>";
+            if ((Math.floor(val / 2) % 2) == 1)
+                retStr += "<tr><td>"+options[1]+"</td></tr>";
+            else
+                retStr += "<tr><td>Do not "+options[1]+"</td></tr>";
 
-        if ((Math.floor(val / 2) % 2) == 1)
-            retStr += "<tr><td>"+options[1]+"</td></tr>";
-        else
-            retStr += "<tr><td>Do not "+options[1]+"</td></tr>";
-
-        if ((Math.floor(val / 4) % 2) == 1)
-            retStr += "<tr><td>"+options[2]+"</td></tr>";
-        else
-            retStr += "<tr><td>Do not "+options[2]+"</td></tr>";
-
+            if ((Math.floor(val / 4) % 2) == 1)
+                retStr += "<tr><td>"+options[2]+"</td></tr>";
+            else
+                retStr += "<tr><td>Do not "+options[2]+"</td></tr>";
+        }
         retStr += "</table>";
         return retStr;
     }
