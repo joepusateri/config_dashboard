@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         DisplayConfig
+// @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
 // @version      2024-04-05
 // @description  try to take over the world!
