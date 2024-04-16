@@ -16,8 +16,9 @@
 (function() {
   'use strict';
     var zNode       = document.createElement ('div');
-    zNode.innerHTML = '<button id="myButton" type="button" hidden>Launch Summary</button>';
+    zNode.innerHTML = '<button id="myButton" type="button" hidden>Display Dashboard</button>';
     zNode.setAttribute ('id', 'myContainer');
+    zNode.setAttribute ('style', 'text-align: center');
 
     document.getElementById('app').insertBefore (zNode, document.getElementById('app').firstChild);
 
