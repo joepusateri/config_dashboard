@@ -433,10 +433,6 @@
           var lookingDown = getValue('LookingDownDetector2_enable', config)
           var lookingDownService = getValue('RiskAssessmentService_looking_down_enabled', config)
           if (lookingDown.value == true && lookingDownService.value == true) {
-              var runtime = getValue('DriverBehaviourService_driver_behaviour_runtime', config)
-              str += "<tr><td>Looking Down Behavior Runtime is "+runtime.value+"</td></tr>";
-              var minSpeed = getValue('DriverBehaviourService_minimum_speed_miph', config)
-              str += "<tr><td>Looking Down Minimum Speed is "+minSpeed.value+" mph ("+Math.round(minSpeed.value * 1.60934)+" kph)</td></tr>";
               var cust = getValue('RiskAssessmentService_looking_down_is_customer_facing', config)
               var media_low = getValue('RiskAssessmentService_looking_down_low_media_profile', config)
               var media_medium = getValue('RiskAssessmentService_looking_down_high_media_profile', config)
@@ -451,6 +447,10 @@
               }
               str += "<tr><td>Backend flags "+printFlags(backend.value)+"</td>";
               str += "<tr><td>Media Profile by Severity is "+media_low.value+", "+media_medium.value+", "+media_high.value+"</td></tr>";
+              var runtime = getValue('DriverBehaviourService_driver_behaviour_runtime', config)
+              str += "<tr><td>Behavior Runtime is "+runtime.value+"</td></tr>";
+              var minSpeed = getValue('DriverBehaviourService_minimum_speed_miph', config)
+              str += "<tr><td>Minimum Speed is "+minSpeed.value+" mph ("+Math.round(minSpeed.value * 1.60934)+" kph)</td></tr>";
           }
           else
               str += "<tr><td>Looking Down Detection is <div class=\"switchoff\">OFF</div></td></tr>";
