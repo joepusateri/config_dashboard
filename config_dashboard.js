@@ -57,10 +57,15 @@
       b.removeAttribute("hidden");
   }
 
-  function getPage(config)
+    function isDefault(keyvalue)
+    {
+        return(keyvalue["source"] == "default");
+    }
+
+    function getPage(config)
     {
         var str = "<head><style>.switchover {font-weight: bold; display: inline; color: orange} .switchon {font-weight: bold; display: inline; color: green} .switchoff {font-weight: bold; display: inline; color: red} .c1 {border: 0px solid green} table {border: 1px solid black;border-collapse: collapse;}th {background: #cccccc; padding: 10px;text-align: center; } td {padding: 10px;text-align: left}</style></style></head>";
-        str += "<table class=\"c1\"><tr><td>"+getIVAInfo(config)+"</td><td>"+getTMX(config)+"</td><td>"+getAudio(config)+"</td></tr><tr><td colspan=\"1\">"+getMark(config)+"</td><td>"+getDriverID(config)+"</td><td>"+getUploadPolicy(config)+"</td></tr></table>";
+        str += "<table class=\"c1\"><tr><td>"+getIVAInfo(config)+"</td><td>"+getTMX(config)+"</td><td>"+getAudio(config)+"</td></tr><tr><td>"+getMark(config)+"</td><td>"+getDriverID(config)+"</td><td>"+getUploadPolicy(config)+"</td></tr><tr><td colspan=\"3\">"+getShutdownDelays(config)+"</td></tr></table>";
         str += "<table class=\"c1\"><tr><td>"+getSeatBelt(config)+"</td><td>"+getObstruction(config)+"</td></tr></table>";
         str += "<table class=\"c1\"><tr><td>"+getDistractions(config)+"</td><td>"+getCellPhone(config)+"</td></tr><tr><td>"+getSmoking(config)+"</td><td>"+getDrowsiness(config)+"</td></tr></table>";
         str += "<table class=\"c1\"><tr><td>"+getTailgating(config)+"</td><td>"+getTailgatingPlusD(config)+"</td></tr></table>";
@@ -166,6 +171,20 @@
       return str;
   }
 
+   function getShutdownDelays(config)
+  {
+      var str = "<table align=\"center\"><tr><th>Device shutdown delays</th></tr>";
+
+      var park = getValue('VehicleStateModule_park_delay', config)
+      var sleep = getValue('VehicleStateModule_sleep_delay', config)
+      str += "<tr><td><table>";
+      str += "<tr><td>Delay from STOPPED to PARKED state is <b>" + park.value + "</b> ms</td></tr>";
+      str += "<tr><td>Delay from PARKED to SLEEP state is <b>" + sleep.value + "</b> ms</td></tr>";
+      str += "</th></tr></table>";
+      str += "</table>";
+      return str;
+  }
+
   function getDriverID(config)
   {
       var str = "<table><tr><th>Driver ID is ";
@@ -245,7 +264,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -289,7 +308,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -330,7 +349,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -371,7 +390,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -423,7 +442,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -476,7 +495,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -521,7 +540,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -566,7 +585,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -616,7 +635,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -658,7 +677,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -701,7 +720,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -748,7 +767,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -795,7 +814,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -840,7 +859,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -885,7 +904,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
@@ -930,7 +949,7 @@
               str += "<div class=\"switchoff\">OFF</div>";
           } else {
               if (isIVAOff(config))
-                  str += "<div class=\"switchoff\">OFF *</div>";
+                  str += "<div class=\"switchoff\">OFF &uarr;</div>";
               else
                   str += "<div class=\"switchon\">ON</div>";
           }
