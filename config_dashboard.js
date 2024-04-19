@@ -33,6 +33,17 @@
     }
   }
 
+  function msToTime(ms) {
+    let seconds = (ms / 1000).toFixed(3);
+    let minutes = (ms / (1000 * 60)).toFixed(3);
+    let hours = (ms / (1000 * 60 * 60)).toFixed(3);
+    let days = (ms / (1000 * 60 * 60 * 24)).toFixed(3);
+    if (seconds < 60) return (seconds == Math.trunc(seconds) ? Math.trunc(seconds) : seconds) + " s";
+    else if (minutes < 60) return (minutes == Math.trunc(minutes) ? Math.trunc(minutes) : minutes) + " min";
+    else if (hours < 24) return (hours == Math.trunc(hours) ? Math.trunc(hours) : hours) + " hr";
+    else return (days == Math.trunc(days) ? Math.trunc(days) : days) + " days"
+  }
+
   function popPage(jNode) {
     var yraw = jNode.childNodes[1].childNodes[0].textContent;
     var win = window.open("", "displayconfig", "popup");
@@ -161,8 +172,8 @@
     var park = getValue("VehicleStateModule_park_delay", config);
     var sleep = getValue("VehicleStateModule_sleep_delay", config);
     str += "<tr><td><table>";
-    str += "<tr><td>Delay from STOPPED to PARKED state is <b>" + park.value + "</b> ms</td></tr>";
-    str += "<tr><td>Delay from PARKED to SLEEP state is <b>" + sleep.value + "</b> ms</td></tr>";
+    str += "<tr><td>Delay from STOPPED to PARKED state is <b>" + msToTime(park.value) + "</b></td></tr>";
+    str += "<tr><td>Delay from PARKED to SLEEP state is <b>" + msToTime(sleep.value) + "</b></td></tr>";
     str += "</th></tr></table>";
     str += "</table>";
     return str;
@@ -202,11 +213,11 @@
       str += "<tr><td><table>";
       var markBefore = getValue("HardwareMarkButtonModule_min_mark_video_before_event", config);
       var markAfter = getValue("HardwareMarkButtonModule_min_mark_video_after_event", config);
-      str += "<tr><td>Mark button records <b>" + markBefore.value + "</b> ms before and <b>" + markAfter.value + "</b> ms after press</td></tr>";
+      str += "<tr><td>Mark button records <b>" + msToTime(markBefore.value) + "</b> before and <b>" + msToTime(markAfter.value) + "</b> after press</td></tr>";
 
       var panicBefore = getValue("HardwareMarkButtonModule_min_panic_video_before_event", config);
       var panicAfter = getValue("HardwareMarkButtonModule_min_panic_video_after_event", config);
-      str += "<tr><td>Panic button records <b>" + panicBefore.value + "</b> ms before and <b>" + panicAfter.value + "</b> ms after press</td></tr>";
+      str += "<tr><td>Panic button records <b>" + msToTime(panicBefore.value) + "</b> before and <b>" + msToTime(panicAfter.value) + "</b> after press</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</table>";
@@ -380,7 +391,7 @@
         str += "<tr><td>Initial Alert Delay is " + initial_delay.value + "</td></tr>";
       }
       str += "<tr><td>Event Delay is " + eventdelay.value + " s</td></tr>";
-      str += "<tr><td>End Event after " + endAfter.value + " ms</td></tr>";
+      str += "<tr><td>End Event " + msToTime(endAfter.value) + " after speed drops below threshold</td></tr>";
 
       str += "<tr><td>Speeding Thesholds are <b>" + low.value + "</b> mph (" + Math.round(low.value * 1.60934) + " kph), <b>" + medium.value + "</b> mph (" + Math.round(medium.value * 1.60934) + " kph), <b>" + high.value + "</b> mph (" + Math.round(high.value * 1.60934) + " kph)</td></tr>";
       str += "</table></td></tr>";
