@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-04-15
+// @version      2024-04-26
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -436,7 +436,7 @@
           str += '<div class="switchon">ON</div></td></tr>';
         }
         str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-        str += "<tr><td>Media Profile by Severity is " + media_low.value + ", " + media_medium.value + ", " + media_high.value + "</td></tr>";
+        str += "<tr><td>Media Profile by Severity is <table class=\"c1\" style=\"display:inline\"><tr><td>Low</td><td>" + getMedia(media_low.value, config) + "</tr><tr><td>Medium</td><td>" + getMedia(media_medium.value, config) + "</td></tr><tr><td>High</td><td>" + getMedia(media_high.value, config) + "</td></tr></table></td></tr>";
         var runtime = getValue("DriverBehaviourService_driver_behaviour_runtime", config);
         str += "<tr><td>Behavior Runtime is " + runtime.value + "</td></tr>";
         var minSpeed = getValue("DriverBehaviourService_minimum_speed_miph", config);
@@ -489,6 +489,17 @@
     return str;
   }
 
+  function getMedia(code, config)
+  {
+      if (code == "EXTRA7")
+      {
+          var ssProb = getValue("MediaProfiles_extra7_snapshot_upload_probability", config);
+          return "Dynamic Snapshots (" + ssProb.value +"% Upload)";
+      }
+      else return code;
+
+  }
+
   function getSeatBelt(config) {
     var str = "<table><tr><th>Seat Belt Detection is ";
 
@@ -522,7 +533,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></tr>";
       str += "</table></td></tr>";
@@ -564,7 +575,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config) + "</td></tr>";
       str += "<tr><td>Solar Filter is ";
       if (solarFilter.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -609,7 +620,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config) + "</td>";
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></td></tr>";
       str += "</table></td></tr>";
     }
@@ -649,7 +660,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "</table></td></tr>";
     }
@@ -691,7 +702,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Delay before Event is " + delayEvent.value + " s</td></tr>";
       str += "<tr><td>Minimum TTH is " + minimumTTH.value + " s</td></tr>";
@@ -735,7 +746,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Delay before Event is " + delayEvent.value + " s</td></tr>";
       str += "<tr><td>Minimum TTH is " + minimumTTH.value + " s</td></tr>";
@@ -778,7 +789,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
       str += "</table></td></tr>";
@@ -820,7 +831,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
       str += "</table></td></tr>";
@@ -862,7 +873,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
       str += "</table></td></tr>";
@@ -904,7 +915,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
       str += "</table></td></tr>";
