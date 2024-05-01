@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-05-01
+// @version      2024-05-01-01
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -16,20 +16,20 @@
 (function () {
   "use strict";
   var zNode = document.createElement("div");
-  zNode.innerHTML = '<button id="myButton" type="button" hidden>Display Dashboard</button>';
-  zNode.setAttribute("id", "myContainer");
+  zNode.innerHTML = '<button id="n2" type="button" hidden>Display Dashboard for N2</button> <button id="n3" type="button" hidden>Display Dashboard for N3</button> <button id="n4" type="button" hidden>Display Dashboard for N4</button>';
   zNode.setAttribute("style", "text-align: center");
-
   document.getElementById("app").insertBefore(zNode, document.getElementById("app").firstChild);
 
-  document.getElementById("myButton").addEventListener("click", ButtonClickAction, false);
+  document.getElementById("n2").addEventListener("click", ButtonClickAction, false);
+  document.getElementById("n3").addEventListener("click", ButtonClickAction, false);
+  document.getElementById("n4").addEventListener("click", ButtonClickAction, false);
 
   function ButtonClickAction(zEvent) {
     var zNode = document.getElementById("mergedreview_edit_config_result_wrap");
     if (zNode == null) {
-      window.alert("Click on Merged");
+      window.alert("Click on MERGED");
     } else {
-      popPage(zNode);
+      popPage(zNode, zEvent.target.id);
     }
   }
 
@@ -44,18 +44,19 @@
     else return (days == Math.trunc(days) ? Math.trunc(days) : days) + " days"
   }
 
-  function popPage(jNode) {
+  function popPage(jNode, deviceType) {
     var yraw = jNode.childNodes[1].childNodes[0].textContent;
     var win = window.open("", "displayconfig", "popup");
     try
     {
-        var n3 = jsyaml.load(yraw).n3["configuration-settings"];
-        win.document.body.innerHTML = getPage(n3);
+        console.log("joe: "+(deviceType in jsyaml.load(yraw)));
+        var deviceConfig = jsyaml.load(yraw)[deviceType]["configuration-settings"];
+        win.document.body.innerHTML = getPage(deviceConfig, deviceType);
     }
     catch (e)
     {
         console.log(e);
-        win.document.body.innerHTML = "No n3 data found: "+e;
+        win.document.body.innerHTML = "No "+deviceType+" configuration found";
     }
     return false;
   }
@@ -69,8 +70,9 @@
   waitForKeyElements("tbody[id^='mergedreview_edit_config_result_wrap']", zapHiddenReplies, false);
 
   function zapHiddenReplies(jNode) {
-    var b = document.getElementById("myButton");
-    b.removeAttribute("hidden");
+    document.getElementById("n2").removeAttribute("hidden");
+    document.getElementById("n3").removeAttribute("hidden");
+    document.getElementById("n4").removeAttribute("hidden");
   }
 
   /**
@@ -82,9 +84,9 @@
     return keyvalue["source"] == "default";
   }
 
-  function getPage(config) {
+  function getPage(config, deviceTypeName) {
     var str = "<head><style>.switchover {font-weight: bold; display: inline; color: orange} .switchon {font-weight: bold; display: inline; color: green} .switchoff {font-weight: bold; display: inline; color: red} .c1 {border: 0px solid green} table {border: 1px solid black;border-collapse: collapse;}th {background: #cccccc; padding: 10px;text-align: center; } td {padding: 10px;text-align: left}</style></style></head>";
-    str += getTitle(config);
+    str += getTitle(config, deviceTypeName);
     str += '<table class="c1"><tr><td>' + getIVAInfo(config) + "</td><td>" + getTMX(config) + "</td><td>" + getAudio(config) + "</td></tr><tr><td>" + getMark(config) + "</td><td>" + getDriverID(config) + "</td><td>" + getUploadPolicy(config) + '</td></tr><tr><td colspan="3">' + getShutdownDelays(config) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getSeatBelt(config) + "</td><td>" + getObstruction(config) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getDistractions(config) + "</td><td>" + getCellPhone(config) + "</td></tr><tr><td>" + getSmoking(config) + "</td><td>" + getDrowsiness(config) + "</td></tr></table>";
@@ -94,11 +96,11 @@
     return str;
   }
 
-  function getTitle(config)
+  function getTitle(config, deviceTypeName)
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
