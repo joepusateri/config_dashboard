@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-04-26-01
+// @version      2024-05-01
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -47,8 +47,16 @@
   function popPage(jNode) {
     var yraw = jNode.childNodes[1].childNodes[0].textContent;
     var win = window.open("", "displayconfig", "popup");
-    var n3 = jsyaml.load(yraw).n3["configuration-settings"];
-    win.document.body.innerHTML = getPage(n3);
+    try
+    {
+        var n3 = jsyaml.load(yraw).n3["configuration-settings"];
+        win.document.body.innerHTML = getPage(n3);
+    }
+    catch (e)
+    {
+        console.log(e);
+        win.document.body.innerHTML = "No n3 data found: "+e;
+    }
     return false;
   }
 
@@ -76,6 +84,7 @@
 
   function getPage(config) {
     var str = "<head><style>.switchover {font-weight: bold; display: inline; color: orange} .switchon {font-weight: bold; display: inline; color: green} .switchoff {font-weight: bold; display: inline; color: red} .c1 {border: 0px solid green} table {border: 1px solid black;border-collapse: collapse;}th {background: #cccccc; padding: 10px;text-align: center; } td {padding: 10px;text-align: left}</style></style></head>";
+    str += getTitle(config);
     str += '<table class="c1"><tr><td>' + getIVAInfo(config) + "</td><td>" + getTMX(config) + "</td><td>" + getAudio(config) + "</td></tr><tr><td>" + getMark(config) + "</td><td>" + getDriverID(config) + "</td><td>" + getUploadPolicy(config) + '</td></tr><tr><td colspan="3">' + getShutdownDelays(config) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getSeatBelt(config) + "</td><td>" + getObstruction(config) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getDistractions(config) + "</td><td>" + getCellPhone(config) + "</td></tr><tr><td>" + getSmoking(config) + "</td><td>" + getDrowsiness(config) + "</td></tr></table>";
@@ -83,6 +92,20 @@
     str += '<table class="c1"><tr><td>' + getPCW(config) + "</td><td>" + getPCWPlusD(config) + "</td></tr><tr><td>" + getFCW(config) + "</td><td>" + getFCWPlusD(config) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getAcceleration(config) + "</td><td>" + getBraking(config) + "</td><td>" + getCornering(config) + '</td></tr><tr><td colspan="3">' + getPostedSpeeding(config) + "</td></tr></table>";
     return str;
+  }
+
+  function getTitle(config)
+  {
+    var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
+    var fleetName = titles.item(4).textContent;
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td>';
+    var deviceName = "";
+    if (titles.length > 6){
+        deviceName = titles.item(6).textContent;
+        retStr += '<tr><td style="font-weight: bold;  color: blue; text-align: center"> DEVICE: ' + deviceName + '</td></tr>';
+    }
+    retStr += '</tr></table>';
+    return retStr;
   }
 
   function printBits(val, options) {
