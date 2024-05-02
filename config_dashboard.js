@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-05-01-02
+// @version      2024-05-02
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -102,7 +102,7 @@
     str += '<table class="c1"><tr><td>' + getDistractions(config, currentDefs) + "</td><td>" + getCellPhone(config, currentDefs) + "</td></tr><tr><td>" + getSmoking(config, currentDefs) + "</td><td>" + getDrowsiness(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getTailgating(config, currentDefs) + "</td><td>" + getTailgatingPlusD(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getPCW(config, currentDefs) + "</td><td>" + getPCWPlusD(config, currentDefs) + "</td></tr><tr><td>" + getFCW(config, currentDefs) + "</td><td>" + getFCWPlusD(config, currentDefs) + "</td></tr></table>";
-    str += '<table class="c1"><tr><td>' + getAcceleration(config, currentDefs) + "</td><td>" + getBraking(config, currentDefs) + "</td><td>" + getCornering(config, currentDefs) + '</td></tr><tr><td colspan="3">' + getPostedSpeeding(config, currentDefs) + "</td></tr></table>";
+    str += '<table class="c1"><tr><td>' + getAcceleration(config, currentDefs) + "</td><td>" + getBraking(config, currentDefs) + "</td><td>" + getCornering(config, currentDefs) + '</td></tr><tr><td colspan="3">' + getPostedSpeeding(config, currentDefs) + '</td></tr></tr><tr><td colspan="3">' + getMaxSpeeding(config, currentDefs) + '</td></tr></table>';
     return str;
   }
 
@@ -383,7 +383,7 @@
   }
 
   function getPostedSpeeding(config, defaults) {
-    var str = '<table align="center"><tr><th>Speeding Detection is ';
+    var str = '<table align="center"><tr><th>Posted Speeding Detection is ';
 
     var service = getValue("SpeedingDetectionService_enabled", config, defaults);
     var riskService = getValue("RiskAssessmentService_posted_speed_enabled", config, defaults);
@@ -419,12 +419,59 @@
       }
       str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
       if (rta.value == true) {
-        str += "<tr><td>Initial Alert Delay is " + initial_delay.value + "</td></tr>";
+        str += "<tr><td>Initial Alert Delay is " + initial_delay.value + " ms</td></tr>";
       }
       str += "<tr><td>Event Delay is " + eventdelay.value + " s</td></tr>";
       str += "<tr><td>End Event " + msToTime(endAfter.value) + " after speed drops below threshold</td></tr>";
 
       str += "<tr><td>Speeding Thesholds are <b>" + low.value + "</b> mph (" + Math.round(low.value * 1.60934) + " kph), <b>" + medium.value + "</b> mph (" + Math.round(medium.value * 1.60934) + " kph), <b>" + high.value + "</b> mph (" + Math.round(high.value * 1.60934) + " kph)</td></tr>";
+      str += "</table></td></tr>";
+    }
+    str += "</tr></table>";
+    return str;
+  }
+
+  function getMaxSpeeding(config, defaults) {
+    var str = '<table align="center"><tr><th>Max Speeding Detection is ';
+
+    var service = getValue("SpeedingDetectionService_enabled", config, defaults);
+    var riskService = getValue("RiskAssessmentService_max_speed_enabled", config, defaults);
+    if (service.value == false || riskService.value == false) {
+      str += '<div class="switchoff">OFF</div></th></tr>';
+    } else {
+      str += '<div class="switchon">ON</div>';
+      var rta = getValue("RiskAssessmentService_max_speed_should_play_rta", config, defaults);
+      str += " / Alerts ";
+      if (rta.value == false) {
+        str += '<div class="switchoff">OFF</div>';
+      } else {
+        if (isIVAOff(config, defaults)) str += '<div class="switchoff">OFF &uarr;</div>';
+        else str += '<div class="switchon">ON</div>';
+      }
+      str += "</th></tr>";
+
+      str += "<tr><td><table>";
+      var cust = getValue("RiskAssessmentService_max_speed_is_customer_facing", config, defaults);
+      var media = getValue("RiskAssessmentService_max_speed_media_profile", config, defaults);
+      var initial_delay = getValue("RiskAssessmentService_max_speed_rta_initial_alert_ms", config, defaults);
+      var upperlimit = getValue("RiskAssessmentService_max_speed_speed_limit_miph", config, defaults);
+      var eventdelay = getValue("RiskAssessmentService_max_speed_start_above_s", config, defaults);
+      var endAfter = getValue("RiskAssessmentService_max_speed_end_below_s", config, defaults);
+
+      str += "<tr><td>Customer facing is ";
+      if (cust.value == false) {
+        str += '<div class="switchoff">OFF</div></td></tr>';
+      } else {
+        str += '<div class="switchon">ON</div></td></tr>';
+      }
+      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      if (rta.value == true) {
+        str += "<tr><td>Initial Alert Delay is " + initial_delay.value + " ms</td></tr>";
+      }
+      str += "<tr><td>Event Delay is " + eventdelay.value + " s</td></tr>";
+      str += "<tr><td>End Event " + msToTime(endAfter.value) + " after speed drops below threshold</td></tr>";
+
+      str += "<tr><td>Speeding Theshold is <b>" + upperlimit.value + "</b> mph (" + Math.round(upperlimit.value * 1.60934) + " kph)</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
