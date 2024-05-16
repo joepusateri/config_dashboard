@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-05-02
+// @version      2024-05-16
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -293,6 +293,7 @@
       var cust = getValue("RiskAssessmentService_acceleration_is_customer_facing", config, defaults);
       var media = getValue("RiskAssessmentService_acceleration_media_profile", config, defaults);
       var backend = getValue("RiskAssessmentService_acceleration_backend_flags", config, defaults);
+      var lockout = getValue("RiskAssessmentService_acceleration_rta_lockout_ms", config, defaults);
 
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
@@ -302,6 +303,7 @@
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -330,6 +332,7 @@
       var cust = getValue("RiskAssessmentService_braking_is_customer_facing", config, defaults);
       var media = getValue("RiskAssessmentService_braking_media_profile", config, defaults);
       var backend = getValue("RiskAssessmentService_braking_backend_flags", config, defaults);
+      var lockout = getValue("RiskAssessmentService_braking_rta_lockout_ms", config, defaults);
 
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
@@ -339,6 +342,7 @@
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -367,6 +371,7 @@
       var cust = getValue("RiskAssessmentService_cornering_is_customer_facing", config, defaults);
       var media = getValue("RiskAssessmentService_cornering_media_profile", config, defaults);
       var backend = getValue("RiskAssessmentService_cornering_backend_flags", config, defaults);
+      var lockout = getValue("RiskAssessmentService_cornering_rta_lockout_ms", config, defaults);
 
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
@@ -376,6 +381,7 @@
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -645,6 +651,7 @@
       var backend = getValue("RiskAssessmentService_obstructed_backend_flags", config, defaults);
       var solarFilter = getValue("RiskAssessmentService_obstructed_solar_position_alert_filter_enabled", config, defaults);
       var eventDelay = getValue("RiskAssessmentService_obstructed_distraction_ge_threshold_s", config, defaults);
+      var lockout = getValue("RiskAssessmentService_obstructed_rta_lockout_ms", config, defaults);
 
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
@@ -661,6 +668,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></tr>";
+      str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -690,6 +698,7 @@
       var media = getValue("RiskAssessmentService_smoking_media_profile", config, defaults);
       var backend = getValue("RiskAssessmentService_smoking_backend_flags", config, defaults);
       var eventDelay = getValue("RiskAssessmentService_smoking_duration_ge_threshold_s", config, defaults);
+      var lockout = getValue("RiskAssessmentService_smoking_rta_lockout_ms", config, defaults);
 
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
@@ -700,6 +709,7 @@
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></td></tr>";
+      str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -730,6 +740,9 @@
       var media = getValue("RiskAssessmentService_drowsiness_media_profile", config, defaults);
       var backend = getValue("RiskAssessmentService_drowsiness_backend_flags", config, defaults);
       var minSpeed = getValue("RiskAssessmentService_drowsiness_speed_ge_threshold_miph", config, defaults);
+      var lockout1 = getValue("RiskAssessmentService_drowsiness_rta_initial_lockout_ms", config, defaults);
+      var lockout2 = getValue("RiskAssessmentService_drowsiness_rta_second_lockout_ms", config, defaults);
+      var lockout3 = getValue("RiskAssessmentService_drowsiness_rta_third_lockout_ms", config, defaults);
 
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
@@ -740,6 +753,7 @@
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
+      str += "<tr><td>Progressive IVA Lockout durations are (" + msToTime(lockout1.value) + ", " + msToTime(lockout2.value) + ", " + msToTime(lockout3.value) + ")</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
