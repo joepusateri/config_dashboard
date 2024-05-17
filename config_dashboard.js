@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-05-17
+// @version      2024-05-17-1
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -410,12 +410,16 @@
       str += "<tr><td><table>";
       var cust = getValue("RiskAssessmentService_posted_speed_is_customer_facing", config, defaults);
       var media = getValue("RiskAssessmentService_posted_speed_media_profile", config, defaults);
-      var initial_delay = getValue("RiskAssessmentService_posted_speed_rta_initial_alert_ms", config, defaults);
       var low = getValue("SpeedingDetectionService_low_band_min_overage_speed_mph", config, defaults);
       var medium = getValue("SpeedingDetectionService_medium_band_min_overage_speed_mph", config, defaults);
       var high = getValue("SpeedingDetectionService_high_band_min_overage_speed_mph", config, defaults);
       var eventdelay = getValue("RiskAssessmentService_posted_speed_start_above_s", config, defaults);
       var endAfter = getValue("SpeedingDetectionService_end_below_gt_ms", config, defaults);
+      var continuous = getValue("RiskAssessmentService_posted_speed_continuous_alert_enabled", config, defaults);
+      var continuous_interval = getValue("RiskAssessmentService_posted_speed_continuous_alert_interval_ms", config, defaults);
+      var initial_alert = getValue("RiskAssessmentService_posted_speed_rta_initial_alert_ms", config, defaults);
+      var second_alert = getValue("RiskAssessmentService_posted_speed_rta_second_alert_ms", config, defaults);
+      var final_alert = getValue("RiskAssessmentService_posted_speed_rta_final_alert_ms", config, defaults);
 
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
@@ -424,13 +428,15 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
-      if (rta.value == true) {
-        str += "<tr><td>Initial Alert Delay is " + initial_delay.value + " ms</td></tr>";
-      }
       str += "<tr><td>Event Delay is " + eventdelay.value + " s</td></tr>";
       str += "<tr><td>End Event " + msToTime(endAfter.value) + " after speed drops below threshold</td></tr>";
 
       str += "<tr><td>Speeding Thesholds are <b>" + low.value + "</b> mph (" + Math.round(low.value * 1.60934) + " kph), <b>" + medium.value + "</b> mph (" + Math.round(medium.value * 1.60934) + " kph), <b>" + high.value + "</b> mph (" + Math.round(high.value * 1.60934) + " kph)</td></tr>";
+      if (continuous.value == true){
+          str += "<tr><td>Alert continuously every " + msToTime(continuous_interval.value) + "</td></tr>";
+      } else {
+          str += "<tr><td>Alert sequentially (" + msToTime(initial_alert.value) + ", " + msToTime(second_alert.value) + ", " + msToTime(final_alert.value) + ")</td></tr>";
+      }
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -556,6 +562,11 @@
       var backend = getValue("RiskAssessmentService_cell_phone_backend_flags", config, defaults);
       var minSpeed = getValue("DriverBehaviourService_minimum_speed_miph", config, defaults);
       var eventDelay = getValue("RiskAssessmentService_cell_phone_distraction_ge_threshold_s", config, defaults);
+      var continuous = getValue("RiskAssessmentService_cell_phone_continuous_alert_enabled", config, defaults);
+      var continuous_interval = getValue("RiskAssessmentService_cell_phone_continuous_alert_interval_ms", config, defaults);
+      var initial_alert = getValue("RiskAssessmentService_cell_phone_rta_initial_alert_ms", config, defaults);
+      var second_alert = getValue("RiskAssessmentService_cell_phone_rta_second_alert_ms", config, defaults);
+      var final_alert = getValue("RiskAssessmentService_cell_phone_rta_final_alert_ms", config, defaults);
 
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
@@ -567,6 +578,12 @@
       str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></tr>";
+      if (continuous.value == true){
+          str += "<tr><td>Alert continuously every " + msToTime(continuous_interval.value) + "</td></tr>";
+      } else {
+          str += "<tr><td>Alert sequentially (" + msToTime(initial_alert.value) + ", " + msToTime(second_alert.value) + ", " + msToTime(final_alert.value) + ")</td></tr>";
+      }
+
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -609,6 +626,11 @@
       var backend = getValue("RiskAssessmentService_no_seat_belt_backend_flags", config, defaults);
       var minSpeed = getValue("RiskAssessmentService_no_seat_belt_speed_ge_threshold_miph", config, defaults);
       var eventDelay = getValue("RiskAssessmentService_no_seat_belt_distraction_ge_threshold_s", config, defaults);
+      var continuous = getValue("RiskAssessmentService_no_seat_belt_continuous_alert_enabled", config, defaults);
+      var continuous_interval = getValue("RiskAssessmentService_no_seat_belt_continuous_alert_interval_ms", config, defaults);
+      var initial_alert = getValue("RiskAssessmentService_no_seat_belt_rta_initial_alert_ms", config, defaults);
+      var second_alert = getValue("RiskAssessmentService_no_seat_belt_rta_second_alert_ms", config, defaults);
+      var final_alert = getValue("RiskAssessmentService_no_seat_belt_rta_final_alert_ms", config, defaults);
 
       str += "<tr><td>Customer facing is </th>";
       if (cust.value == false) {
@@ -620,6 +642,11 @@
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></tr>";
+      if (continuous.value == true){
+          str += "<tr><td>Alert continuously every " + msToTime(continuous_interval.value) + "</td></tr>";
+      } else {
+          str += "<tr><td>Alert sequentially (" + msToTime(initial_alert.value) + ", " + msToTime(second_alert.value) + ", " + msToTime(final_alert.value) + ")</td></tr>";
+      }
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
