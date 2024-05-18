@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-05-17-1
+// @version      2024-05-17-2
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -341,7 +341,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
     }
@@ -380,7 +380,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
     }
@@ -427,7 +427,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Event Delay is " + eventdelay.value + " s</td></tr>";
       str += "<tr><td>End Event " + msToTime(endAfter.value) + " after speed drops below threshold</td></tr>";
 
@@ -435,7 +435,7 @@
       if (continuous.value == true){
           str += "<tr><td>Alert continuously every " + msToTime(continuous_interval.value) + "</td></tr>";
       } else {
-          str += "<tr><td>Alert sequentially (" + msToTime(initial_alert.value) + ", " + msToTime(second_alert.value) + ", " + msToTime(final_alert.value) + ")</td></tr>";
+          str += "<tr><td>Alert sequentially at (" + msToTime(initial_alert.value) + ", " + msToTime(second_alert.value) + ", " + msToTime(final_alert.value) + ")</td></tr>";
       }
       str += "</table></td></tr>";
     }
@@ -476,7 +476,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       if (rta.value == true) {
         str += "<tr><td>Initial Alert Delay is " + initial_delay.value + " ms</td></tr>";
       }
@@ -575,13 +575,13 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></tr>";
       if (continuous.value == true){
           str += "<tr><td>Alert continuously every " + msToTime(continuous_interval.value) + "</td></tr>";
       } else {
-          str += "<tr><td>Alert sequentially (" + msToTime(initial_alert.value) + ", " + msToTime(second_alert.value) + ", " + msToTime(final_alert.value) + ")</td></tr>";
+          str += "<tr><td>Alert sequentially at (" + msToTime(initial_alert.value) + ", " + msToTime(second_alert.value) + ", " + msToTime(final_alert.value) + ")</td></tr>";
       }
 
       str += "</table></td></tr>";
@@ -645,7 +645,7 @@
       if (continuous.value == true){
           str += "<tr><td>Alert continuously every " + msToTime(continuous_interval.value) + "</td></tr>";
       } else {
-          str += "<tr><td>Alert sequentially (" + msToTime(initial_alert.value) + ", " + msToTime(second_alert.value) + ", " + msToTime(final_alert.value) + ")</td></tr>";
+          str += "<tr><td>Alert sequentially at (" + msToTime(initial_alert.value) + ", " + msToTime(second_alert.value) + ", " + msToTime(final_alert.value) + ")</td></tr>";
       }
       str += "</table></td></tr>";
     }
