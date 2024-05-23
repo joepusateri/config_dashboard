@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-05-17-2
+// @version      2024-05-22
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -770,6 +770,7 @@
       var lockout1 = getValue("RiskAssessmentService_drowsiness_rta_initial_lockout_ms", config, defaults);
       var lockout2 = getValue("RiskAssessmentService_drowsiness_rta_second_lockout_ms", config, defaults);
       var lockout3 = getValue("RiskAssessmentService_drowsiness_rta_third_lockout_ms", config, defaults);
+      var scoreThreshold = getValue("DrowsinessService_score_threshold", config, defaults);
 
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
@@ -780,6 +781,7 @@
       str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
+      str += "<tr><td>Drowsiness Score Threshold is " + scoreThreshold.value + "</td></tr>";
       str += "<tr><td>Progressive IVA Lockout durations are (" + msToTime(lockout1.value) + ", " + msToTime(lockout2.value) + ", " + msToTime(lockout3.value) + ")</td></tr>";
       str += "</table></td></tr>";
     }
