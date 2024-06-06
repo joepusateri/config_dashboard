@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-05-22
+// @version      2024-06-06
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -431,7 +431,7 @@
       str += "<tr><td>Event Delay is " + eventdelay.value + " s</td></tr>";
       str += "<tr><td>End Event " + msToTime(endAfter.value) + " after speed drops below threshold</td></tr>";
 
-      str += "<tr><td>Speeding Thesholds are <b>" + low.value + "</b> mph (" + Math.round(low.value * 1.60934) + " kph), <b>" + medium.value + "</b> mph (" + Math.round(medium.value * 1.60934) + " kph), <b>" + high.value + "</b> mph (" + Math.round(high.value * 1.60934) + " kph)</td></tr>";
+      str += "<tr><td>Speeding Thresholds are <b>" + low.value + "</b> mph (" + Math.round(low.value * 1.60934) + " kph), <b>" + medium.value + "</b> mph (" + Math.round(medium.value * 1.60934) + " kph), <b>" + high.value + "</b> mph (" + Math.round(high.value * 1.60934) + " kph)</td></tr>";
       if (continuous.value == true){
           str += "<tr><td>Alert continuously every " + msToTime(continuous_interval.value) + "</td></tr>";
       } else {
@@ -483,7 +483,7 @@
       str += "<tr><td>Event Delay is " + eventdelay.value + " s</td></tr>";
       str += "<tr><td>End Event " + msToTime(endAfter.value) + " after speed drops below threshold</td></tr>";
 
-      str += "<tr><td>Speeding Theshold is <b>" + upperlimit.value + "</b> mph (" + Math.round(upperlimit.value * 1.60934) + " kph)</td></tr>";
+      str += "<tr><td>Speeding Threshold is <b>" + upperlimit.value + "</b> mph (" + Math.round(upperlimit.value * 1.60934) + " kph)</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -518,6 +518,7 @@
         var media_medium = getValue("RiskAssessmentService_looking_down_high_media_profile", config, defaults);
         var media_high = getValue("RiskAssessmentService_looking_down_severe_media_profile", config, defaults);
         var backend = getValue("RiskAssessmentService_looking_down_backend_flags", config, defaults);
+        var level_two_IVA_name = getValue("EventAudioService_level_two_distraction_name", config, defaults);
 
         str += "<td>Customer facing is ";
         if (cust.value == false) {
@@ -531,6 +532,7 @@
         str += "<tr><td>Behavior Runtime is " + runtime.value + "</td></tr>";
         var minSpeed = getValue("DriverBehaviourService_minimum_speed_miph", config, defaults);
         str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
+        str += "<tr><td>Level two IVA is " + level_two_IVA_name.value + "</td></tr>";
       } else str += '<tr><td>Looking Down Detection is <div class="switchoff">OFF</div></td></tr>';
       str += "</table></td></tr>";
     }
