@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-06-06
+// @version      2024-06-18
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -140,7 +140,7 @@
   }
 
   function printFlags(val) {
-    return printBits(val, ["Show in fleet app", "Count in VERA", "Count in Event Counts"]);
+    return printBits(val, ["Show in Fleet App", "Count in VERA", "Count in Event Counts"]);
   }
 
   function isIVAOff(config, defaults) {
@@ -294,7 +294,16 @@
       var media = getValue("RiskAssessmentService_acceleration_media_profile", config, defaults);
       var backend = getValue("RiskAssessmentService_acceleration_backend_flags", config, defaults);
       var lockout = getValue("RiskAssessmentService_acceleration_rta_lockout_ms", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_acceleration_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -333,7 +342,16 @@
       var media = getValue("RiskAssessmentService_braking_media_profile", config, defaults);
       var backend = getValue("RiskAssessmentService_braking_backend_flags", config, defaults);
       var lockout = getValue("RiskAssessmentService_braking_rta_lockout_ms", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_braking_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -372,7 +390,16 @@
       var media = getValue("RiskAssessmentService_cornering_media_profile", config, defaults);
       var backend = getValue("RiskAssessmentService_cornering_backend_flags", config, defaults);
       var lockout = getValue("RiskAssessmentService_cornering_rta_lockout_ms", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_cornering_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -420,7 +447,16 @@
       var initial_alert = getValue("RiskAssessmentService_posted_speed_rta_initial_alert_ms", config, defaults);
       var second_alert = getValue("RiskAssessmentService_posted_speed_rta_second_alert_ms", config, defaults);
       var final_alert = getValue("RiskAssessmentService_posted_speed_rta_final_alert_ms", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_posted_speed_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -469,7 +505,16 @@
       var upperlimit = getValue("RiskAssessmentService_max_speed_speed_limit_miph", config, defaults);
       var eventdelay = getValue("RiskAssessmentService_max_speed_start_above_s", config, defaults);
       var endAfter = getValue("RiskAssessmentService_max_speed_end_below_s", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_max_speed_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -519,7 +564,16 @@
         var media_high = getValue("RiskAssessmentService_looking_down_severe_media_profile", config, defaults);
         var backend = getValue("RiskAssessmentService_looking_down_backend_flags", config, defaults);
         var level_two_IVA_name = getValue("EventAudioService_level_two_distraction_name", config, defaults);
+        var uploadWhenNoAlerts = getValue("RiskAssessmentService_looking_down_should_upload_media_when_no_alerts", config, defaults);
 
+        if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+        }
         str += "<td>Customer facing is ";
         if (cust.value == false) {
           str += '<div class="switchoff">OFF</div></td></tr>';
@@ -569,7 +623,16 @@
       var initial_alert = getValue("RiskAssessmentService_cell_phone_rta_initial_alert_ms", config, defaults);
       var second_alert = getValue("RiskAssessmentService_cell_phone_rta_second_alert_ms", config, defaults);
       var final_alert = getValue("RiskAssessmentService_cell_phone_rta_final_alert_ms", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_cell_phone_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -633,7 +696,16 @@
       var initial_alert = getValue("RiskAssessmentService_no_seat_belt_rta_initial_alert_ms", config, defaults);
       var second_alert = getValue("RiskAssessmentService_no_seat_belt_rta_second_alert_ms", config, defaults);
       var final_alert = getValue("RiskAssessmentService_no_seat_belt_rta_final_alert_ms", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_no_seat_belt_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is </th>";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -681,7 +753,16 @@
       var solarFilter = getValue("RiskAssessmentService_obstructed_solar_position_alert_filter_enabled", config, defaults);
       var eventDelay = getValue("RiskAssessmentService_obstructed_distraction_ge_threshold_s", config, defaults);
       var lockout = getValue("RiskAssessmentService_obstructed_rta_lockout_ms", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_obstructed_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -728,7 +809,16 @@
       var backend = getValue("RiskAssessmentService_smoking_backend_flags", config, defaults);
       var eventDelay = getValue("RiskAssessmentService_smoking_duration_ge_threshold_s", config, defaults);
       var lockout = getValue("RiskAssessmentService_smoking_rta_lockout_ms", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_smoking_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -773,7 +863,16 @@
       var lockout2 = getValue("RiskAssessmentService_drowsiness_rta_second_lockout_ms", config, defaults);
       var lockout3 = getValue("RiskAssessmentService_drowsiness_rta_third_lockout_ms", config, defaults);
       var scoreThreshold = getValue("DrowsinessService_score_threshold", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_drowsiness_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -820,7 +919,16 @@
       var lockout1 = getValue("RiskAssessmentService_tg_rta_initial_alert_ms", config, defaults);
       var lockout2 = getValue("RiskAssessmentService_tg_rta_repeat_interval_ms", config, defaults);
       var lockout3 = getValue("RiskAssessmentService_tg_rta_repeat_until_ms", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_tg_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -873,7 +981,16 @@
       var lockout1 = getValue("RiskAssessmentService_tg_distraction_rta_initial_alert_ms", config, defaults);
       var lockout2 = getValue("RiskAssessmentService_tg_distraction_rta_repeat_interval_ms", config, defaults);
       var lockout3 = getValue("RiskAssessmentService_tg_distraction_rta_repeat_until_ms", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_tg_distraction_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -922,7 +1039,16 @@
       var backend = getValue("RiskAssessmentService_pcw_backend_flags", config, defaults);
       var minSpeed = getValue("RiskAssessmentService_pcw_speed_ge_threshold_miph", config, defaults);
       var minimumTTC = getValue("RiskAssessmentService_pcw_ttc_le_threshold_s", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_pcw_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -964,6 +1090,16 @@
       var backend = getValue("RiskAssessmentService_pcw_distraction_backend_flags", config, defaults);
       var minSpeed = getValue("RiskAssessmentService_pcw_distraction_speed_ge_threshold_miph", config, defaults);
       var minimumTTC = getValue("RiskAssessmentService_pcw_distraction_ttc_le_threshold_s", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_pcw_distraction_should_upload_media_when_no_alerts", config, defaults);
+
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
 
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
@@ -1006,7 +1142,16 @@
       var backend = getValue("RiskAssessmentService_fcw_backend_flags", config, defaults);
       var minSpeed = getValue("RiskAssessmentService_fcw_speed_ge_threshold_miph", config, defaults);
       var minimumTTC = getValue("RiskAssessmentService_fcw_ttc_le_threshold_s", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_fcw_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -1048,7 +1193,16 @@
       var backend = getValue("RiskAssessmentService_fcw_distraction_backend_flags", config, defaults);
       var minSpeed = getValue("RiskAssessmentService_fcw_distraction_speed_ge_threshold_miph", config, defaults);
       var minimumTTC = getValue("RiskAssessmentService_fcw_distraction_ttc_le_threshold_s", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_fcw_distraction_should_upload_media_when_no_alerts", config, defaults);
 
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
       str += "<tr><td>Customer facing is ";
       if (cust.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
