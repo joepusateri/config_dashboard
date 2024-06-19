@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-06-18
+// @version      2024-06-19
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -110,7 +110,7 @@
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2024-06-19</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
@@ -310,7 +310,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
       str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
@@ -358,7 +358,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
@@ -406,7 +406,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
@@ -580,7 +580,7 @@
         } else {
           str += '<div class="switchon">ON</div></td></tr>';
         }
-        str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+        //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
         str += "<tr><td>Media Profile by Severity is <table class=\"c1\" style=\"display:inline\"><tr><td>Low</td><td>" + getMedia(media_low.value, config, defaults) + "</tr><tr><td>Medium</td><td>" + getMedia(media_medium.value, config, defaults) + "</td></tr><tr><td>High</td><td>" + getMedia(media_high.value, config, defaults) + "</td></tr></table></td></tr>";
         var runtime = getValue("DriverBehaviourService_driver_behaviour_runtime", config, defaults);
         str += "<tr><td>Behavior Runtime is " + runtime.value + "</td></tr>";
@@ -639,7 +639,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></tr>";
@@ -712,7 +712,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></tr>";
@@ -769,7 +769,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Solar Filter is ";
       if (solarFilter.value == false) {
@@ -825,7 +825,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></td></tr>";
       str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
@@ -879,7 +879,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Drowsiness Score Threshold is " + scoreThreshold.value + "</td></tr>";
@@ -935,7 +935,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Delay before Event is " + delayEvent.value + " s</td></tr>";
@@ -997,7 +997,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Delay before Event is " + delayEvent.value + " s</td></tr>";
@@ -1055,7 +1055,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
@@ -1107,7 +1107,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
@@ -1158,7 +1158,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
@@ -1209,7 +1209,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
