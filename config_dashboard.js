@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-06-19
+// @version      2024-07-03
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -97,7 +97,7 @@
     var currentDefs = defs[deviceTypeName];
     var str = "<head><style>.switchover {font-weight: bold; display: inline; color: orange} .switchon {font-weight: bold; display: inline; color: green} .switchoff {font-weight: bold; display: inline; color: red} .c1 {border: 0px solid green} table {border: 1px solid black;border-collapse: collapse;}th {background: #cccccc; padding: 10px;text-align: center; } td {padding: 10px;text-align: left}</style></style></head>";
     str += getTitle(config, deviceTypeName);
-    str += '<table class="c1"><tr><td>' + getIVAInfo(config, currentDefs) + "</td><td>" + getTMX(config, currentDefs) + "</td><td>" + getAudio(config, currentDefs) + "</td></tr><tr><td>" + getMark(config, currentDefs) + "</td><td>" + getDriverID(config, currentDefs) + "</td><td>" + getUploadPolicy(config, currentDefs) + '</td></tr><tr><td colspan="3">' + getShutdownDelays(config, currentDefs) + "</td></tr></table>";
+    str += '<table class="c1"><tr><td>' + getIVAInfo(config, currentDefs) + "</td><td>" + getTMX(config, currentDefs) + "</td><td>" + getAudio(config, currentDefs) + "</td></tr><tr><td>" + getMark(config, currentDefs) + "</td><td>" + getDriverID(config, currentDefs) + "</td><td>" + getUploadPolicy(config, currentDefs) + '</td></tr><tr><td>' + getVolumeSettings(config, currentDefs) + '</td><td>&nbsp;</td><td>' + getShutdownDelays(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getSeatBelt(config, currentDefs) + "</td><td>" + getObstruction(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getDistractions(config, currentDefs) + "</td><td>" + getCellPhone(config, currentDefs) + "</td></tr><tr><td>" + getSmoking(config, currentDefs) + "</td><td>" + getDrowsiness(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getTailgating(config, currentDefs) + "</td><td>" + getTailgatingPlusD(config, currentDefs) + "</td></tr></table>";
@@ -110,7 +110,7 @@
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2024-06-19</td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2024-07-03</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
@@ -209,6 +209,19 @@
     str += "<tr><td><table>";
     str += "<tr><td>Delay from STOPPED to PARKED state is <b>" + msToTime(park.value) + "</b></td></tr>";
     str += "<tr><td>Delay from PARKED to SLEEP state is <b>" + msToTime(sleep.value) + "</b></td></tr>";
+    str += "</th></tr></table>";
+    str += "</table>";
+    return str;
+  }
+
+  function getVolumeSettings(config, defaults) {
+    var str = '<table align="center"><tr><th>Volume Settings</th></tr>';
+
+    var default_volume = getValue("NautoApplication_default_volume", config, defaults);
+    var min_volume = getValue("NautoApplication_minimum_volume", config, defaults);
+    str += "<tr><td><table>";
+    str += "<tr><td>Minimum Allowed Volume is <b>" +min_volume.value + "</b></td></tr>";
+    str += "<tr><td>Startup / Default Volume is <b>" + default_volume.value + "</b></td></tr>";
     str += "</th></tr></table>";
     str += "</table>";
     return str;
