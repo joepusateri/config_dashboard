@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2024-07-03
+// @version      2025-02-27
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -110,7 +110,7 @@
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2024-07-03</td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-02-27</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
@@ -763,8 +763,10 @@
       var cust = getValue("RiskAssessmentService_obstructed_is_customer_facing", config, defaults);
       var media = getValue("RiskAssessmentService_obstructed_media_profile", config, defaults);
       var backend = getValue("RiskAssessmentService_obstructed_backend_flags", config, defaults);
+      var minSpeed = getValue("RiskAssessmentService_obstructed_speed_ge_threshold_miph", config, defaults);
       var solarFilter = getValue("RiskAssessmentService_obstructed_solar_position_alert_filter_enabled", config, defaults);
       var eventDelay = getValue("RiskAssessmentService_obstructed_distraction_ge_threshold_s", config, defaults);
+      var repeat = getValue("RiskAssessmentService_obstructed_rta_repeat_interval_ms", config, defaults);
       var lockout = getValue("RiskAssessmentService_obstructed_rta_lockout_ms", config, defaults);
       var uploadWhenNoAlerts = getValue("RiskAssessmentService_obstructed_should_upload_media_when_no_alerts", config, defaults);
 
@@ -784,6 +786,7 @@
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
+      str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Solar Filter is ";
       if (solarFilter.value == false) {
         str += '<div class="switchoff">OFF</div></td></tr>';
@@ -791,7 +794,8 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></tr>";
-      str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
+      str += "<tr><td>Repeats every " + msToTime(repeat.value) + " (subject to lockout)</td></tr>";
+      str += "<tr><td>Lockout duration (after each alert) is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -876,6 +880,8 @@
       var lockout2 = getValue("RiskAssessmentService_drowsiness_rta_second_lockout_ms", config, defaults);
       var lockout3 = getValue("RiskAssessmentService_drowsiness_rta_third_lockout_ms", config, defaults);
       var scoreThreshold = getValue("DrowsinessService_score_threshold", config, defaults);
+      var continuation_period = getValue("RiskAssessmentService_drowsiness_event_continuation_s", config, defaults);
+
       var uploadWhenNoAlerts = getValue("RiskAssessmentService_drowsiness_should_upload_media_when_no_alerts", config, defaults);
 
       if (isIVAOff(config, defaults) || !rta.value) {
@@ -896,6 +902,7 @@
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Drowsiness Score Threshold is " + scoreThreshold.value + "</td></tr>";
+      str += "<tr><td>Event Continuation period is " + msToTime(continuation_period.value * 1000.0) + "</td></tr>";
       str += "<tr><td>Progressive IVA Lockout durations are (" + msToTime(lockout1.value) + ", " + msToTime(lockout2.value) + ", " + msToTime(lockout3.value) + ")</td></tr>";
       str += "</table></td></tr>";
     }
