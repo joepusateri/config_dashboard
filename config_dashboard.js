@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2025-02-27
+// @version      2025-02-27a
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -100,6 +100,7 @@
     str += '<table class="c1"><tr><td>' + getIVAInfo(config, currentDefs) + "</td><td>" + getTMX(config, currentDefs) + "</td><td>" + getAudio(config, currentDefs) + "</td></tr><tr><td>" + getMark(config, currentDefs) + "</td><td>" + getDriverID(config, currentDefs) + "</td><td>" + getUploadPolicy(config, currentDefs) + '</td></tr><tr><td>' + getVolumeSettings(config, currentDefs) + '</td><td>&nbsp;</td><td>' + getShutdownDelays(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getSeatBelt(config, currentDefs) + "</td><td>" + getObstruction(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getDistractions(config, currentDefs) + "</td><td>" + getCellPhone(config, currentDefs) + "</td></tr><tr><td>" + getSmoking(config, currentDefs) + "</td><td>" + getDrowsiness(config, currentDefs) + "</td></tr></table>";
+    str += '<table class="c1"><tr><td>' + getPFStopSignRollingStop(config, currentDefs) + "</td><td>" + getPFStopSignViolation(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getTailgating(config, currentDefs) + "</td><td>" + getTailgatingPlusD(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getPCW(config, currentDefs) + "</td><td>" + getPCWPlusD(config, currentDefs) + "</td></tr><tr><td>" + getFCW(config, currentDefs) + "</td><td>" + getFCWPlusD(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getAcceleration(config, currentDefs) + "</td><td>" + getBraking(config, currentDefs) + "</td><td>" + getCornering(config, currentDefs) + '</td></tr><tr><td colspan="3">' + getPostedSpeeding(config, currentDefs) + '</td></tr></tr><tr><td colspan="3">' + getMaxSpeeding(config, currentDefs) + '</td></tr></table>';
@@ -110,7 +111,7 @@
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-02-27</td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-02-27a</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
@@ -1028,6 +1029,100 @@
           str += "<tr><td>Delay before IVA is " + msToTime(lockout1.value) + "</td></tr>";
           str += "<tr><td>Repeat IVA every " + msToTime(lockout2.value) + " until " + msToTime(lockout3.value) + "</td></tr>";
       }
+      str += "</table></td></tr>";
+    }
+    str += "</tr></table>";
+    return str;
+  }
+
+  function getPFStopSignViolation(config, defaults) {
+    var str = "<table><tr><th>Post-facto Stop Sign Violation is ";
+
+    var service = getValue("PostFactoStopSignService_enabled", config, defaults);
+    var riskService = getValue("RiskAssessmentService_post_facto_stop_sign_violation_enabled", config, defaults);
+    if (service.value == false || riskService.value == false) {
+      str += '<div class="switchoff">OFF</div></th></tr>';
+    } else {
+      str += '<div class="switchon">ON</div>';
+      var rta = getValue("RiskAssessmentService_post_facto_stop_sign_violation_should_play_rta", config, defaults);
+      str += " / Alerts ";
+      if (rta.value == false) {
+        str += '<div class="switchoff">OFF</div>';
+      } else {
+        if (isIVAOff(config, defaults)) str += '<div class="switchoff">OFF &uarr;</div>';
+        else str += '<div class="switchon">ON</div>';
+      }
+      str += "</th></tr>";
+
+      str += "<tr><td><table>";
+      var cust = getValue("RiskAssessmentService_post_facto_stop_sign_violation_is_customer_facing", config, defaults);
+      var media = getValue("RiskAssessmentService_post_facto_stop_sign_violation_media_profile", config, defaults);
+      var backend = getValue("RiskAssessmentService_post_facto_stop_sign_violation_backend_flags", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_post_facto_stop_sign_violation_should_upload_media_when_no_alerts", config, defaults);
+
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
+      str += "<tr><td>Customer facing is ";
+      if (cust.value == false) {
+        str += '<div class="switchoff">OFF</div></td></tr>';
+      } else {
+        str += '<div class="switchon">ON</div></td></tr>';
+      }
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
+      str += "</table></td></tr>";
+    }
+    str += "</tr></table>";
+    return str;
+  }
+
+  function getPFStopSignRollingStop(config, defaults) {
+    var str = "<table><tr><th>Post-facto Stop Sign Rolling Stop is ";
+
+    var service = getValue("PostFactoStopSignService_enabled", config, defaults);
+    var riskService = getValue("RiskAssessmentService_post_facto_stop_sign_rolling_stop_enabled", config, defaults);
+    if (service.value == false || riskService.value == false) {
+      str += '<div class="switchoff">OFF</div></th></tr>';
+    } else {
+      str += '<div class="switchon">ON</div>';
+      var rta = getValue("RiskAssessmentService_post_facto_stop_sign_rolling_stop_should_play_rta", config, defaults);
+      str += " / Alerts ";
+      if (rta.value == false) {
+        str += '<div class="switchoff">OFF</div>';
+      } else {
+        if (isIVAOff(config, defaults)) str += '<div class="switchoff">OFF &uarr;</div>';
+        else str += '<div class="switchon">ON</div>';
+      }
+      str += "</th></tr>";
+
+      str += "<tr><td><table>";
+      var cust = getValue("RiskAssessmentService_post_facto_stop_sign_rolling_stop_is_customer_facing", config, defaults);
+      var media = getValue("RiskAssessmentService_post_facto_stop_sign_rolling_stop_media_profile", config, defaults);
+      var backend = getValue("RiskAssessmentService_post_facto_stop_sign_rolling_stop_backend_flags", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_post_facto_stop_sign_rolling_stop_should_upload_media_when_no_alerts", config, defaults);
+
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
+      str += "<tr><td>Customer facing is ";
+      if (cust.value == false) {
+        str += '<div class="switchoff">OFF</div></td></tr>';
+      } else {
+        str += '<div class="switchon">ON</div></td></tr>';
+      }
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
