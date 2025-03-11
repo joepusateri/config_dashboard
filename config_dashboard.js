@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2025-02-27a
+// @version      2025-03-11
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -111,7 +111,7 @@
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-02-27a</td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-03-11</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
@@ -868,7 +868,7 @@
         str += '<div class="switchoff">OFF</div>';
       } else {
         if (isIVAOff(config, defaults)) str += '<div class="switchoff">OFF &uarr;</div>';
-        else str += '<div class="switchon">ON</div>';
+        else str += '<div class="switchon">ON</div></div>';
       }
       str += "</th></tr>";
 
@@ -884,6 +884,11 @@
       var continuation_period = getValue("RiskAssessmentService_drowsiness_event_continuation_s", config, defaults);
 
       var uploadWhenNoAlerts = getValue("RiskAssessmentService_drowsiness_should_upload_media_when_no_alerts", config, defaults);
+      var explanation = "When the vehicle is moving at least "+minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph) and the AI model score is above the threshold, the event is created. After the score falls below the threshold for "+msToTime(continuation_period.value * 1000.0)+ " then the event will end.";
+      explanation += " The IVA will immediately sound after the event is created, and will not sound for at least " + msToTime(lockout1.value);
+      explanation += ". If the event persists, the IVA will sound again and then not sound for at least " + msToTime(lockout2.value);
+      explanation += ". If the event persists, the IVA will sound again and then not sound for at least " + msToTime(lockout3.value);
+      explanation += ". If the event persists, the cycle will repeat.";
 
       if (isIVAOff(config, defaults) || !rta.value) {
           str += "<tr><td>Show events/media in Fleet App is ";
@@ -905,6 +910,7 @@
       str += "<tr><td>Drowsiness Score Threshold is " + scoreThreshold.value + "</td></tr>";
       str += "<tr><td>Event Continuation period is " + msToTime(continuation_period.value * 1000.0) + "</td></tr>";
       str += "<tr><td>Progressive IVA Lockout durations are (" + msToTime(lockout1.value) + ", " + msToTime(lockout2.value) + ", " + msToTime(lockout3.value) + ")</td></tr>";
+      str += "<tr><td><div><img valign=\"bottom\" align=\"right\" width=20 style=\"cursor:pointer;\" src=\"https://thumbs.dreamstime.com/b/traffic-sign-question-mark-vector-illustration-yellow-black-rhombus-shaped-signaling-326563219.jpg\" title=\""+explanation+"\"></div></td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -942,6 +948,7 @@
       var lockout3 = getValue("RiskAssessmentService_tg_rta_repeat_until_ms", config, defaults);
       var uploadWhenNoAlerts = getValue("RiskAssessmentService_tg_should_upload_media_when_no_alerts", config, defaults);
 
+      var explanation = "When the vehicle is tailgating at or under "+minimumTTH.value + " s behind, and is driving at least "+minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph) for at least "+ delayEvent.value + " s, the event is created."
       if (isIVAOff(config, defaults) || !rta.value) {
           str += "<tr><td>Show events/media in Fleet App is ";
           if (uploadWhenNoAlerts.value == false) {
@@ -963,10 +970,19 @@
       str += "<tr><td>Minimum TTH is " + minimumTTH.value + " s</td></tr>";
       if (lockout2.value == 0) {
           str += "<tr><td>Delay before IVA is " + msToTime(lockout1.value) + " and does not repeat</td></tr>";
+          explanation += " The IVA will sound "+msToTime(lockout1.value) + " later, and does not repeat.";
       } else {
           str += "<tr><td>Delay before IVA is " + msToTime(lockout1.value) + "</td></tr>";
           str += "<tr><td>Repeat IVA every " + msToTime(lockout2.value) + " until " + msToTime(lockout3.value) + "</td></tr>";
+          explanation += " The IVA will sound "+msToTime(lockout1.value) + " later, and repeats " ;
+          if (msToTime(lockout2.value) == msToTime(lockout3.value))
+          {
+              explanation += "at " + msToTime(lockout2.value) + " and will not repeat again.";
+          } else {
+              explanation += "every " + msToTime(lockout2.value) + " with the last one at " + msToTime(lockout3.value) + ".";
+          }
       }
+      str += "<tr><td><div><img valign=\"bottom\" align=\"right\" width=20 style=\"cursor:pointer;\" src=\"https://thumbs.dreamstime.com/b/traffic-sign-question-mark-vector-illustration-yellow-black-rhombus-shaped-signaling-326563219.jpg\" title=\""+explanation+"\"></div></td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -1004,6 +1020,8 @@
       var lockout3 = getValue("RiskAssessmentService_tg_distraction_rta_repeat_until_ms", config, defaults);
       var uploadWhenNoAlerts = getValue("RiskAssessmentService_tg_distraction_should_upload_media_when_no_alerts", config, defaults);
 
+      var explanation = "When the driver is distracted, if the vehicle is tailgating at or under "+minimumTTH.value + " s behind, and is driving at least "+minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph) for at least "+ delayEvent.value + " s, the event is created."
+
       if (isIVAOff(config, defaults) || !rta.value) {
           str += "<tr><td>Show events/media in Fleet App is ";
           if (uploadWhenNoAlerts.value == false) {
@@ -1025,10 +1043,19 @@
       str += "<tr><td>Minimum TTH is " + minimumTTH.value + " s</td></tr>";
       if (lockout2.value == 0) {
           str += "<tr><td>Delay before IVA is " + msToTime(lockout1.value) + " and does not repeat</td></tr>";
+          explanation += " The IVA will sound "+msToTime(lockout1.value) + " later, and does not repeat.";
       } else {
           str += "<tr><td>Delay before IVA is " + msToTime(lockout1.value) + "</td></tr>";
           str += "<tr><td>Repeat IVA every " + msToTime(lockout2.value) + " until " + msToTime(lockout3.value) + "</td></tr>";
+          explanation += " The IVA will sound "+msToTime(lockout1.value) + " later, and repeats " ;
+          if (msToTime(lockout2.value) == msToTime(lockout3.value))
+          {
+              explanation += "at " + msToTime(lockout2.value) + " and will not repeat again.";
+          } else {
+              explanation += "every " + msToTime(lockout2.value) + " with the last one at " + msToTime(lockout3.value) + ".";
+          }
       }
+      str += "<tr><td><div><img valign=\"bottom\" align=\"right\" width=20 style=\"cursor:pointer;\" src=\"https://thumbs.dreamstime.com/b/traffic-sign-question-mark-vector-illustration-yellow-black-rhombus-shaped-signaling-326563219.jpg\" title=\""+explanation+"\"></div></td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
