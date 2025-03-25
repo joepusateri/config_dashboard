@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2025-03-11
+// @version      2025-03-25
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -111,7 +111,7 @@
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-03-11</td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-03-25</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
@@ -882,6 +882,7 @@
       var lockout3 = getValue("RiskAssessmentService_drowsiness_rta_third_lockout_ms", config, defaults);
       var scoreThreshold = getValue("DrowsinessService_score_threshold", config, defaults);
       var continuation_period = getValue("RiskAssessmentService_drowsiness_event_continuation_s", config, defaults);
+      var model = getValue("DrowsinessService_minimum_compatible_drowsiness_model_version", config, defaults);
 
       var uploadWhenNoAlerts = getValue("RiskAssessmentService_drowsiness_should_upload_media_when_no_alerts", config, defaults);
       var explanation = "When the vehicle is moving at least "+minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph) and the AI model score is above the threshold, the event is created. After the score falls below the threshold for "+msToTime(continuation_period.value * 1000.0)+ " then the event will end.";
@@ -905,6 +906,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      str += "<tr><td>Drowsiness Model is v" + model.value + "</td></tr>";
       str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Drowsiness Score Threshold is " + scoreThreshold.value + "</td></tr>";
