@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2025-04-12
+// @version      2025-05-12
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -112,7 +112,7 @@
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-04-12</td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-05-12</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
@@ -596,6 +596,7 @@
         var backend = getValue("RiskAssessmentService_looking_down_backend_flags", config, defaults);
         var level_two_IVA_name = getValue("EventAudioService_level_two_distraction_name", config, defaults);
         var uploadWhenNoAlerts = getValue("RiskAssessmentService_looking_down_should_upload_media_when_no_alerts", config, defaults);
+        var distractionStateMachineVersion = getValue("DistractionGlobal_detector_state_machine_version", config, defaults);
 
         if (isIVAOff(config, defaults) || !rta.value) {
           str += "<tr><td>Show events/media in Fleet App is ";
@@ -618,6 +619,7 @@
         var minSpeed = getValue("DriverBehaviourService_minimum_speed_miph", config, defaults);
         str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
         str += "<tr><td>Level two IVA is " + level_two_IVA_name.value + "</td></tr>";
+        str += "<tr><td>Distraction State Machine Version is " + distractionStateMachineVersion.value + "</td></tr>";
       } else str += '<tr><td>Looking Down Detection is <div class="switchoff">OFF</div></td></tr>';
       str += "</table></td></tr>";
     }
