@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2025-03-25
+// @version      2025-04-12
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -101,6 +101,7 @@
     str += '<table class="c1"><tr><td>' + getSeatBelt(config, currentDefs) + "</td><td>" + getObstruction(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getDistractions(config, currentDefs) + "</td><td>" + getCellPhone(config, currentDefs) + "</td></tr><tr><td>" + getSmoking(config, currentDefs) + "</td><td>" + getDrowsiness(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getPFStopSignRollingStop(config, currentDefs) + "</td><td>" + getPFStopSignViolation(config, currentDefs) + "</td></tr></table>";
+    str += '<table class="c1"><tr><td>' + getRedLight(config, currentDefs) + "</td><td>" + getRedLightPlusD(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getTailgating(config, currentDefs) + "</td><td>" + getTailgatingPlusD(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getPCW(config, currentDefs) + "</td><td>" + getPCWPlusD(config, currentDefs) + "</td></tr><tr><td>" + getFCW(config, currentDefs) + "</td><td>" + getFCWPlusD(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getAcceleration(config, currentDefs) + "</td><td>" + getBraking(config, currentDefs) + "</td><td>" + getCornering(config, currentDefs) + '</td></tr><tr><td colspan="3">' + getPostedSpeeding(config, currentDefs) + '</td></tr></tr><tr><td colspan="3">' + getMaxSpeeding(config, currentDefs) + '</td></tr></table>';
@@ -111,7 +112,7 @@
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-03-25</td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-04-12</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
@@ -325,12 +326,28 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + media.value + "</td></tr>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
     return str;
+  }
+
+  function printMediaProfile(code, config, defaults) {
+      var strOut = code;
+      if (code == "EXTRA7")
+      {
+          var ssProb = getValue("MediaProfiles_extra7_snapshot_upload_probability", config, defaults);
+          strOut = "Dynamic Snapshots (" + ssProb.value +"% Upload)";
+      }
+
+      var camera = getValue("MediaProfiles_"+code.toLowerCase()+"_camera_selection", config, defaults);
+      if (camera && camera.value == 0) strOut += " (both cameras off)";
+      if (camera && camera.value == 1) strOut += " (outward only)";
+      if (camera && camera.value == 2) strOut += " (inward only)";
+
+      return strOut;
   }
 
   function getBraking(config, defaults) {
@@ -373,7 +390,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
       str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
     }
@@ -421,7 +438,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
       str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
     }
@@ -477,7 +494,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
       str += "<tr><td>Event Delay is " + eventdelay.value + " s</td></tr>";
       str += "<tr><td>End Event " + msToTime(endAfter.value) + " after speed drops below threshold</td></tr>";
 
@@ -535,7 +552,7 @@
       } else {
         str += '<div class="switchon">ON</div></td></tr>';
       }
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
       if (rta.value == true) {
         str += "<tr><td>Initial Alert Delay is " + initial_delay.value + " ms</td></tr>";
       }
@@ -595,7 +612,7 @@
           str += '<div class="switchon">ON</div></td></tr>';
         }
         //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-        str += "<tr><td>Media Profile by Severity is <table class=\"c1\" style=\"display:inline\"><tr><td>Low</td><td>" + getMedia(media_low.value, config, defaults) + "</tr><tr><td>Medium</td><td>" + getMedia(media_medium.value, config, defaults) + "</td></tr><tr><td>High</td><td>" + getMedia(media_high.value, config, defaults) + "</td></tr></table></td></tr>";
+        str += "<tr><td>Media Profile by Severity is <table class=\"c1\" style=\"display:inline\"><tr><td>Low</td><td>" + printMediaProfile(media_low.value, config, defaults) + "</tr><tr><td>Medium</td><td>" + printMediaProfile(media_medium.value, config, defaults) + "</td></tr><tr><td>High</td><td>" + printMediaProfile(media_high.value, config, defaults) + "</td></tr></table></td></tr>";
         var runtime = getValue("DriverBehaviourService_driver_behaviour_runtime", config, defaults);
         str += "<tr><td>Behavior Runtime is " + runtime.value + "</td></tr>";
         var minSpeed = getValue("DriverBehaviourService_minimum_speed_miph", config, defaults);
@@ -654,7 +671,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></tr>";
       if (continuous.value == true){
@@ -667,17 +684,6 @@
     }
     str += "</tr></table>";
     return str;
-  }
-
-  function getMedia(code, config, defaults)
-  {
-      if (code == "EXTRA7")
-      {
-          var ssProb = getValue("MediaProfiles_extra7_snapshot_upload_probability", config, defaults);
-          return "Dynamic Snapshots (" + ssProb.value +"% Upload)";
-      }
-      else return code;
-
   }
 
   function getSeatBelt(config, defaults) {
@@ -727,7 +733,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></tr>";
       if (continuous.value == true){
@@ -786,7 +792,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Solar Filter is ";
       if (solarFilter.value == false) {
@@ -844,7 +850,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
       str += "<tr><td>Event Delay is " + eventDelay.value + " s</td></td></tr>";
       str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
@@ -907,7 +913,7 @@
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Drowsiness Model is v" + model.value + "</td></tr>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Drowsiness Score Threshold is " + scoreThreshold.value + "</td></tr>";
       str += "<tr><td>Event Continuation period is " + msToTime(continuation_period.value * 1000.0) + "</td></tr>";
@@ -966,7 +972,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Delay before Event is " + delayEvent.value + " s</td></tr>";
       str += "<tr><td>Minimum TTH is " + minimumTTH.value + " s</td></tr>";
@@ -1039,7 +1045,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Delay before Event is " + delayEvent.value + " s</td></tr>";
       str += "<tr><td>Minimum TTH is " + minimumTTH.value + " s</td></tr>";
@@ -1104,7 +1110,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -1151,7 +1157,108 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td></tr>";
+      str += "</table></td></tr>";
+    }
+    str += "</tr></table>";
+    return str;
+  }
+
+  function getRedLight(config, defaults) {
+    var str = "<table><tr><th>Red Light Detection is ";
+
+    var riskService = getValue("RiskAssessmentService_red_light_enabled", config, defaults);
+    if (riskService.value == false) {
+      str += '<div class="switchoff">OFF</div></th></tr>';
+    } else {
+      str += '<div class="switchon">ON</div>';
+      var rta = getValue("RiskAssessmentService_red_light_should_play_rta", config, defaults);
+      str += " / Alerts ";
+      if (rta.value == false) {
+        str += '<div class="switchoff">OFF</div>';
+      } else {
+        if (isIVAOff(config, defaults)) str += '<div class="switchoff">OFF &uarr;</div>';
+        else str += '<div class="switchon">ON</div>';
+      }
+      str += "</th></tr>";
+
+      str += "<tr><td><table>";
+      var cust = getValue("RiskAssessmentService_red_light_is_customer_facing", config, defaults);
+      var media = getValue("RiskAssessmentService_red_light_media_profile", config, defaults);
+      var backend = getValue("RiskAssessmentService_red_light_backend_flags", config, defaults);
+      var minSpeed = getValue("RiskAssessmentService_red_light_speed_ge_threshold_miph", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_red_light_should_upload_media_when_no_alerts", config, defaults);
+      var distanceToLine = getValue("RiskAssessmentService_red_light_delta_distance_threshold_m", config, defaults);
+
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
+      str += "<tr><td>Customer facing is ";
+      if (cust.value == false) {
+        str += '<div class="switchoff">OFF</div></td></tr>';
+      } else {
+        str += '<div class="switchon">ON</div></td></tr>';
+      }
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td></tr>";
+      str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
+      str += "<tr><td>Alert when " + distanceToLine.value + " m from the stop line</td></tr>";
+      str += "</table></td></tr>";
+    }
+    str += "</tr></table>";
+    return str;
+  }
+
+  function getRedLightPlusD(config, defaults) {
+    var str = "<table><tr><th>Red Light +D Detection is ";
+
+    var riskService = getValue("RiskAssessmentService_red_light_distraction_enabled", config, defaults);
+    if (riskService.value == false) {
+      str += '<div class="switchoff">OFF</div></th></tr>';
+    } else {
+      str += '<div class="switchon">ON</div>';
+      var rta = getValue("RiskAssessmentService_red_light_distraction_should_play_rta", config, defaults);
+      str += " / Alerts ";
+      if (rta.value == false) {
+        str += '<div class="switchoff">OFF</div>';
+      } else {
+        if (isIVAOff(config, defaults)) str += '<div class="switchoff">OFF &uarr;</div>';
+        else str += '<div class="switchon">ON</div>';
+      }
+      str += "</th></tr>";
+
+      str += "<tr><td><table>";
+      var cust = getValue("RiskAssessmentService_red_light_distraction_is_customer_facing", config, defaults);
+      var media = getValue("RiskAssessmentService_red_light_distraction_media_profile", config, defaults);
+      var backend = getValue("RiskAssessmentService_red_light_distraction_backend_flags", config, defaults);
+      var minSpeed = getValue("RiskAssessmentService_red_light_distraction_speed_ge_threshold_miph", config, defaults);
+      var uploadWhenNoAlerts = getValue("RiskAssessmentService_red_light_distraction_should_upload_media_when_no_alerts", config, defaults);
+      var distanceToLine = getValue("RiskAssessmentService_red_light_distraction_delta_distance_threshold_m", config, defaults);
+
+      if (isIVAOff(config, defaults) || !rta.value) {
+          str += "<tr><td>Show events/media in Fleet App is ";
+          if (uploadWhenNoAlerts.value == false) {
+              str += '<div class="switchoff">OFF</div></td></tr>';
+          } else {
+              str += '<div class="switchon">ON</div></td></tr>';
+          }
+      }
+
+      str += "<tr><td>Customer facing is ";
+      if (cust.value == false) {
+        str += '<div class="switchoff">OFF</div></td></tr>';
+      } else {
+        str += '<div class="switchon">ON</div></td></tr>';
+      }
+      //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
+      str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
+      str += "<tr><td>Alert when " + distanceToLine.value + " m from the stop line</td></tr>";
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
@@ -1200,7 +1307,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
       str += "</table></td></tr>";
@@ -1252,7 +1359,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
       str += "</table></td></tr>";
@@ -1303,7 +1410,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td></tr>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
       str += "</table></td></tr>";
@@ -1354,7 +1461,7 @@
         str += '<div class="switchon">ON</div></td></tr>';
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
-      str += "<tr><td>Media Profile is " + getMedia(media.value, config, defaults) + "</td>";
+      str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
       str += "</table></td></tr>";
