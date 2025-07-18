@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2025-07-09
+// @version      2025-07-18
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -112,7 +112,7 @@
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-05-12</td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-07-18</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
@@ -650,7 +650,6 @@
       var media = getValue("RiskAssessmentService_cell_phone_media_profile", config, defaults);
       var backend = getValue("RiskAssessmentService_cell_phone_backend_flags", config, defaults);
       var minSpeed = getValue("DriverBehaviourService_minimum_speed_miph", config, defaults);
-      var eventDelayFromDetector = getValue("CellPhoneDetector2_duration_threshold_ms", config, defaults);
       var eventDelay = getValue("RiskAssessmentService_cell_phone_distraction_ge_threshold_s", config, defaults);
       var continuous = getValue("RiskAssessmentService_cell_phone_continuous_alert_enabled", config, defaults);
       var continuous_interval = getValue("RiskAssessmentService_cell_phone_continuous_alert_interval_ms", config, defaults);
@@ -676,7 +675,7 @@
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
-      str += "<tr><td>Event Delay is " + (0 + eventDelay.value + (eventDelayFromDetector.value / 1000)) + " s</td></tr>";
+      str += "<tr><td>Event Delay is " + (0 + eventDelay.value) + " s</td></tr>";
       if (continuous.value == true){
           str += "<tr><td>Alert continuously every " + msToTime(continuous_interval.value) + "</td></tr>";
       } else {
@@ -713,7 +712,6 @@
       var media = getValue("RiskAssessmentService_no_seat_belt_media_profile", config, defaults);
       var backend = getValue("RiskAssessmentService_no_seat_belt_backend_flags", config, defaults);
       var minSpeed = getValue("RiskAssessmentService_no_seat_belt_speed_ge_threshold_miph", config, defaults);
-      var eventDelayFromDetector = getValue("NoSeatBeltDetector2_duration_threshold_ms", config, defaults);
       var eventDelay = getValue("RiskAssessmentService_no_seat_belt_distraction_ge_threshold_s", config, defaults);
       var continuous = getValue("RiskAssessmentService_no_seat_belt_continuous_alert_enabled", config, defaults);
       var continuous_interval = getValue("RiskAssessmentService_no_seat_belt_continuous_alert_interval_ms", config, defaults);
@@ -739,7 +737,7 @@
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
-      str += "<tr><td>Event Delay is " + (0 + eventDelay.value + (eventDelayFromDetector.value / 1000)) + " s</td></tr>";
+      str += "<tr><td>Event Delay is " + (0 + eventDelay.value) + " s</td></tr>";
       if (continuous.value == true){
           str += "<tr><td>Alert continuously every " + msToTime(continuous_interval.value) + "</td></tr>";
       } else {
@@ -835,7 +833,6 @@
       var cust = getValue("RiskAssessmentService_smoking_is_customer_facing", config, defaults);
       var media = getValue("RiskAssessmentService_smoking_media_profile", config, defaults);
       var backend = getValue("RiskAssessmentService_smoking_backend_flags", config, defaults);
-      var eventDelayFromDetector = getValue("SmokingDetector2_duration_threshold_ms", config, defaults);
       var eventDelay = getValue("RiskAssessmentService_smoking_duration_ge_threshold_s", config, defaults);
       var lockout = getValue("RiskAssessmentService_smoking_rta_lockout_ms", config, defaults);
       var uploadWhenNoAlerts = getValue("RiskAssessmentService_smoking_should_upload_media_when_no_alerts", config, defaults);
@@ -856,7 +853,7 @@
       }
       //str += "<tr><td>Backend flags " + printFlags(backend.value) + "</td>";
       str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td>";
-      str += "<tr><td>Event Delay is " + (0 + eventDelay.value + (eventDelayFromDetector.value / 1000)) + " s</td></tr>";
+      str += "<tr><td>Event Delay is " + (0 + eventDelay.value) + " s</td></tr>";
       str += "<tr><td>Lockout duration is " + msToTime(lockout.value) + "</td></tr>";
       str += "</table></td></tr>";
     }
