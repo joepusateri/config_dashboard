@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2025-07-18
+// @version      2025-07-18a
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -112,7 +112,7 @@
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-07-18</td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-07-18a</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
@@ -1293,6 +1293,7 @@
       var minSpeed = getValue("RiskAssessmentService_pcw_speed_ge_threshold_miph", config, defaults);
       var minimumTTC = getValue("RiskAssessmentService_pcw_ttc_le_threshold_s", config, defaults);
       var uploadWhenNoAlerts = getValue("RiskAssessmentService_pcw_should_upload_media_when_no_alerts", config, defaults);
+      var splitIVAs = getValue("RiskAssessmentService_pcw_split_iva_sounds", config, defaults);
 
       if (isIVAOff(config, defaults) || !rta.value) {
           str += "<tr><td>Show events/media in Fleet App is ";
@@ -1312,6 +1313,15 @@
       str += "<tr><td>Media Profile is " + printMediaProfile(media.value, config, defaults) + "</td></tr>";
       str += "<tr><td>Minimum Speed is " + minSpeed.value + " mph (" + Math.round(minSpeed.value * 1.60934) + " kph)</td></tr>";
       str += "<tr><td>Minimum TTC is " + minimumTTC.value + " s</td></tr>";
+
+      str += "<tr><td>";
+      if (splitIVAs.value == false) {
+        str += '<div class="switchoff">Same</div>';
+      } else {
+        str += '<div class="switchon">Different</div>';
+      }
+      str += " IVAs for Pedestrian types</td></tr>";
+
       str += "</table></td></tr>";
     }
     str += "</tr></table>";
