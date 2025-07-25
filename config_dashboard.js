@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2025-07-18a
+// @version      2025-07-24
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -97,7 +97,7 @@
     var currentDefs = defs[deviceTypeName];
     var str = "<head><style>.switchover {font-weight: bold; display: inline; color: orange} .switchon {font-weight: bold; display: inline; color: green} .switchoff {font-weight: bold; display: inline; color: red} .c1 {border: 0px solid green} table {border: 1px solid black;border-collapse: collapse;}th {background: #cccccc; padding: 10px;text-align: center; } td {padding: 10px;text-align: left}</style></style></head>";
     str += getTitle(config, deviceTypeName);
-    str += '<table class="c1"><tr><td>' + getIVAInfo(config, currentDefs) + "</td><td>" + getTMX(config, currentDefs) + "</td><td>" + getAudio(config, currentDefs) + "</td></tr><tr><td>" + getMark(config, currentDefs) + "</td><td>" + getDriverID(config, currentDefs) + "</td><td>" + getUploadPolicy(config, currentDefs) + '</td></tr><tr><td>' + getVolumeSettings(config, currentDefs) + '</td><td>&nbsp;</td><td>' + getShutdownDelays(config, currentDefs) + "</td></tr></table>";
+    str += '<table class="c1"><tr><td>' + getIVAInfo(config, currentDefs) + "</td><td>" + getTMX(config, currentDefs) + "</td><td>" + getAudio(config, currentDefs) + "</td></tr><tr><td>" + getMark(config, currentDefs) + "</td><td>" + getDriverID(config, currentDefs) + "</td><td>" + getUploadPolicy(config, currentDefs) + '</td></tr><tr><td>' + getVolumeSettings(config, currentDefs) + '</td><td>' + getDrivingSide(config, currentDefs) + '</td><td>' + getShutdownDelays(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getSeatBelt(config, currentDefs) + "</td><td>" + getObstruction(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getDistractions(config, currentDefs) + "</td><td>" + getCellPhone(config, currentDefs) + "</td></tr><tr><td>" + getSmoking(config, currentDefs) + "</td><td>" + getDrowsiness(config, currentDefs) + "</td></tr></table>";
     str += '<table class="c1"><tr><td>' + getPFStopSignRollingStop(config, currentDefs) + "</td><td>" + getPFStopSignViolation(config, currentDefs) + "</td></tr></table>";
@@ -112,7 +112,7 @@
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-07-18a</td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-07-24</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
@@ -267,6 +267,19 @@
       var panicAfter = getValue("HardwareMarkButtonModule_min_panic_video_after_event", config, defaults);
       str += "<tr><td>Panic button records <b>" + msToTime(panicBefore.value) + "</b> before and <b>" + msToTime(panicAfter.value) + "</b> after press</td></tr>";
       str += "</table></td></tr>";
+    }
+    str += "</table>";
+    return str;
+  }
+
+  function getDrivingSide(config, defaults) {
+    var str = "<table><tr><th>Driver on ";
+
+    var service = getValue("CameraSchedulerModule_right_hand_drive", config, defaults);
+    if (service.value == false) {
+      str += '<div class="switchon">LEFT</div></th></tr>';
+    } else {
+      str += '<div class="switchon">RIGHT</div></th></tr>';
     }
     str += "</table>";
     return str;
