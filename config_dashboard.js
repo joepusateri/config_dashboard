@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         ConfigDashboard
 // @namespace    http://tampermonkey.net/
-// @version      2025-07-24
+// @version      2025-08-03
 // @description  Render the Device Configuration settings in a readable format
 // @author       Joe Pusateri
 // @match        https://device-config.nauto.systems/edit-configs/*
@@ -112,7 +112,7 @@
   {
     var titles = document.getElementsByClassName("sc-eqIVtm iBRSOA");
     var fleetName = titles.item(4).textContent;
-    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-07-24</td>';
+    var retStr = '<table align="center"><tr><td><b>' + fleetName + '</b></td></tr><tr><td style="font-weight: bold; text-align: center">Configuration: ' + deviceTypeName + '</td></tr><tr><td style="font-style: italic; text-align: center">Version: 2025-08-03</td>';
     var deviceName = "";
     if (titles.length > 6){
         deviceName = titles.item(6).textContent;
@@ -277,9 +277,9 @@
 
     var service = getValue("CameraSchedulerModule_right_hand_drive", config, defaults);
     if (service.value == false) {
-      str += '<div class="switchon">LEFT</div></th></tr>';
+      str += '<div class="switchon">LEFT</div> side of vehicle</th></tr>';
     } else {
-      str += '<div class="switchon">RIGHT</div></th></tr>';
+      str += '<div class="switchon">RIGHT</div> side of vehicle</th></tr>';
     }
     str += "</table>";
     return str;
